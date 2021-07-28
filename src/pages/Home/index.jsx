@@ -1,26 +1,36 @@
-import React, { useCallback } from 'react';
-import { Switch, Route } from "react-router-dom";
+import React, { useLayoutEffect,useState } from 'react';
+import {renderRoutes} from 'react-router-config';
+import { useHistory } from 'react-router-dom';
 
-import {indexChildRoutes} from '../../router';
+import {GlobalContext} from './global-context';
+// import { GlobalContextProvider } from './global-context';
 
-const Home = props => {
-    
-    const renderRouters = useCallback(()=>{
-        let routers = indexChildRoutes.map(item=>(
-            <Route key={item.path} {...item} />
-        ));
-        return routers
-    },[])//依赖动态的indexChildRoutes
-    
-    return(
-        <div>
-            <h1>index的公共layout</h1>
-            <div>
-                <Switch>
-                    {renderRouters()}
-                </Switch>
-            </div>
-        </div>
+const Home = props=>{
+    const {route} = props;
+    const {pathname} = props.history.location;
+    const history = useHistory();
+
+    const [count,setCount] = useState(0);
+
+    useLayoutEffect(()=>{//类似于created
+        const isFound = route.childRoutes?.some(item=>item.path===pathname);
+        if(!isFound){history.push('/notFound')}
+    },[pathname])
+
+    const globalStore={
+        count,
+        setCount
+    }
+
+    return (
+        <GlobalContext.Provider value={globalStore}>
+        {/* <GlobalContextProvider> */}
+
+            <h2>公共的layout</h2>
+            {/* 坑 */}
+            {renderRoutes(route.childRoutes)}
+        {/* </GlobalContextProvider> */}
+         </GlobalContext.Provider>
     )
 }
-export default Home
+export default Home;

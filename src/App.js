@@ -1,16 +1,14 @@
 import React from 'react';
-import {BrowserRouter,Route,Switch} from "react-router-dom";
-import {firstRoutes} from './router'
+import {HashRouter} from 'react-router-dom';
+import {renderRoutes} from 'react-router-config';
+
+import myRoutes from './router';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Switch>
-        {firstRoutes.map(item=>(
-          <Route key={item.path} {...item} />
-        ))}
-      </Switch>
-    </BrowserRouter>
+      <HashRouter>
+        {renderRoutes(myRoutes)}
+      </HashRouter>
   );
 }
 
